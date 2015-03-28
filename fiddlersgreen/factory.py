@@ -11,6 +11,8 @@ import importlib
 
 from flask import (Blueprint, Flask)
 
+from .core import db
+
 
 def create_app(package_name, package_path, config):
     # Create the app
@@ -28,6 +30,7 @@ def create_app(package_name, package_path, config):
 
 
 def register_extensions(app):
+    db.init_app(app)
     return None
 
 
