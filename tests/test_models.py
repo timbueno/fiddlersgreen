@@ -45,8 +45,10 @@ class TestUser:
 class TestRole:
 
     def test_insert_roles(self):
+        from fiddlersgreen.models import ROLES
         Role.insert_roles()
-        for r in ['User', 'Moderator', 'Administrator']:
+        for r in ROLES.keys():
             role = Role.query.filter_by(name=r).first()
             assert role
             assert role.name == r
+            assert role.default is ROLES[r][0]
