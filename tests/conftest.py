@@ -10,6 +10,7 @@ import pytest
 
 from fiddlersgreen.frontend import create_app as create_frontend
 from fiddlersgreen.core import db as _db
+from fiddlersgreen.models import Role
 from fiddlersgreen.settings import config as app_config
 
 
@@ -30,6 +31,7 @@ def db(frontend_app):
     _db.app = frontend_app
     with frontend_app.app_context():
         _db.create_all()
+        Role.insert_roles()
 
     yield _db
 

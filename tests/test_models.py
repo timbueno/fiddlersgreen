@@ -8,7 +8,7 @@
 """
 import pytest
 
-from fiddlersgreen.models import User, AnonymousUser
+from fiddlersgreen.models import User, AnonymousUser, Role
 
 
 @pytest.mark.usefixtures('db')
@@ -39,3 +39,14 @@ class TestUser:
             nickname='longboxed')
         name = user.__repr__()
         assert name == '<User(longboxed)>'
+
+
+@pytest.mark.usefixtures('db')
+class TestRole:
+
+    def test_insert_roles(self):
+        Role.insert_roles()
+        for r in ['User', 'Moderator', 'Administrator']:
+            role = Role.query.filter_by(name=r).first()
+            assert role
+            assert role.name == r
