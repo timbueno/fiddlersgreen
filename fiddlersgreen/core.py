@@ -98,9 +98,13 @@ def ReferenceCol(tablename, nullable=False, pk_name='id', **kwargs):
 
     Usage: ::
 
-        category_id = ReferenceCol('category')
-        category = relationship('Category', backref='categories')
+        User(Model):
+            role_id = ReferenceCol('roles', nullable=True)
+
+        Role(Model):
+            users = relationship('User', backref='role')
     """
     return db.Column(
+        db.Integer,
         db.ForeignKey('{0}.{1}'.format(tablename, pk_name)),
         nullable=nullable, **kwargs)
