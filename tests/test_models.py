@@ -23,3 +23,9 @@ class TestUser:
         retrieved = User.query.get(user.id)
         assert retrieved == user
         assert retrieved.social_id == 'twitter$timbueno'
+    def test_repr(self):
+        user = User.create(
+            social_id='twitter$timbueno',
+            nickname='longboxed')
+        name = user.__repr__()
+        assert name == '<User(\'longboxed\')>'

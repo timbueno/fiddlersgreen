@@ -14,3 +14,6 @@ class User(Model):
     social_id = db.Column(db.String(64), nullable=False, unique=True)
     nickname = db.Column(db.String(64), nullable=False)
     email = db.Column(db.String(64), nullable=True)
+
+    def __repr__(self):
+        return '<User({nickname!r})>'.format(nickname=self.nickname)
