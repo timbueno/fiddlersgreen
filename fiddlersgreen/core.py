@@ -17,6 +17,9 @@ db = SQLAlchemy()
 from flask.ext.migrate import Migrate
 migrate = Migrate()
 
+from flask.ext.login import LoginManager
+login_manager = LoginManager()
+
 
 class CRUDMixin(object):
     """
