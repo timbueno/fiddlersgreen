@@ -21,4 +21,4 @@ class User(Model, UserMixin):
     email = db.Column(db.String(64), nullable=True)
 
     def __repr__(self):
-        return '<User({nickname!r})>'.format(nickname=self.nickname)
+        return '<User({nickname})>'.format(nickname=self.nickname)

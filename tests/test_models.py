@@ -38,4 +38,4 @@ class TestUser:
             social_id='twitter$timbueno',
             nickname='longboxed')
         name = user.__repr__()
-        assert name == '<User(\'longboxed\')>'
+        assert name == '<User(longboxed)>'
