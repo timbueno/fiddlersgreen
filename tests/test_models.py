@@ -40,6 +40,13 @@ class TestUser:
         name = user.__repr__()
         assert name == '<User(longboxed)>'
 
+    def test_default_role(self):
+        user = User.create(
+            social_id='twitter$timbueno',
+            nickname='longboxed')
+        role = user.role
+        assert role.default
+
 
 @pytest.mark.usefixtures('db')
 class TestRole:
