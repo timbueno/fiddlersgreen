@@ -44,8 +44,7 @@ class TestUser:
         user = User.create(
             social_id='twitter$timbueno',
             nickname='longboxed')
-        role = user.role
-        assert role.default
+        assert user.role.default
 
 
 @pytest.mark.usefixtures('db')
