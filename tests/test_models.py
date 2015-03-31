@@ -6,6 +6,8 @@
     model tests
 
 """
+import time
+
 import pytest
 
 from fiddlersgreen.models import User, AnonymousUser, Role
@@ -35,6 +37,22 @@ class TestUser:
     def test_default_role(self):
         user = User.create(email='timbueno@gmail.com')
         assert user.role.default
+
+    def test_password_setter(self):
+        user = User.create(email='timbueno@gmail.com', password='cat')
+        assert user.password_hash is not None
+
+    def test_no_password_getter(self):
+        user = User.create(email='timbueno@gmail.com', password='cat')
+        with pytest.raises(AttributeError):
+            user.password
+
+    def test_ping(self):
+        user = User.create(email='timbueno@gmail.com', password='cat')
+        last_seen_before = user.last_seen
+        time.sleep(1)
+        user.ping()
+        assert user.last_seen > last_seen_before
 
 
 @pytest.mark.usefixtures('db')
