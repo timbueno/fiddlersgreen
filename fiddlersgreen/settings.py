@@ -25,10 +25,7 @@ class DevConfig(Config):
     """Development Configuration"""
     APP_ENV = 'dev'
     DEBUG = True
-    DB_NAME = 'dev.db'
-    # Put the db file in the project root
-    DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(DB_NAME)
+    SQLALCHEMY_DATABASE_URI = os_env.get('DATABASE_URL')
 
 
 class TestConfig(Config):
