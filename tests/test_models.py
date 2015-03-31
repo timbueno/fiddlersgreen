@@ -47,6 +47,15 @@ class TestUser:
         with pytest.raises(AttributeError):
             user.password
 
+    def test_password_verification(self):
+        user = User.create(email='timbueno@gmail.com', password='cat')
+        assert user.verify_password('cat')
+
+    def test_password_salts_are_random(self):
+        u1 = User.create(email='timbueno@gmail.com', password='cat')
+        u2 = User.create(email='longboxed@gmail.com', password='cat')
+        assert u1.password_hash != u2.password_hash
+
     def test_ping(self):
         user = User.create(email='timbueno@gmail.com', password='cat')
         last_seen_before = user.last_seen
