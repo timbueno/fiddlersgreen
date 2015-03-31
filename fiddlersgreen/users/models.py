@@ -6,8 +6,10 @@
     User models
 
 """
+from datetime import datetime
+
 from flask.ext.login import UserMixin, AnonymousUserMixin
-from ..core import db, Model, ReferenceCol
+from ..core import bcrypt, db, Model, ReferenceCol
 
 
 ROLES = {
@@ -46,10 +48,13 @@ class AnonymousUser(AnonymousUserMixin):
 
 class User(Model, UserMixin):
     __tablename__ = 'users'
+    email = db.Column(db.String(64), unique=True, index=True)
+    password_hash = db.Column(db.String(128), nullable=True)
+    member_since = db.Column(db.DateTime(), default=datetime.utcnow)
+    last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
+
+    # Relationships
     role_id = ReferenceCol('roles', nullable=True)
-    social_id = db.Column(db.String(64), nullable=False, unique=True)
-    nickname = db.Column(db.String(64), nullable=False)
-    email = db.Column(db.String(64), nullable=True)
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -57,4 +62,19 @@ class User(Model, UserMixin):
             self.role = Role.query.filter_by(default=True).first()
 
     def __repr__(self):
-        return '<User({nickname})>'.format(nickname=self.nickname)
+        return '<User({email})>'.format(email=self.email)
+
+    @property
+    def password(self):
+        raise AttributeError('password is not a readable attribute')
+
+    @password.setter
+    def password(self, password):
+        self.password_hash = bcrypt.generate_password_hash(password)
+
+    def verify_password(self, password):
+        return bcrypt.check_password_hash(self.password_hash, password)
+
+    def ping(self):
+        self.last_seen = datetime.utcnow()
+        self.save()
