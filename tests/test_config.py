@@ -19,5 +19,5 @@ def test_dev_config():
     c = config['dev']
     assert c == DevConfig
     app = create_app(c)
-    assert app.config['DB_NAME'] == 'dev.db'
+    assert app.config['APP_ENV'] == 'dev'
     assert app.config['DEBUG'] is True

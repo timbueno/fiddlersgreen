@@ -15,18 +15,12 @@ from fiddlersgreen.models import User, AnonymousUser, Role
 class TestUser:
 
     def test_get_by_id(self):
-        user = User.create(
-            social_id='twitter$timbueno',
-            nickname='longboxed')
-
+        user = User.create(email='timbueno@gmail.com')
         retrieved = User.query.get(user.id)
         assert retrieved == user
-        assert retrieved.social_id == 'twitter$timbueno'
 
     def test_is_not_anonymous(self):
-        user = User.create(
-            social_id='twitter$timbueno',
-            nickname='longboxed')
+        user = User.create(email='timbueno@gmail.com')
         assert user.is_anonymous() is False
 
     def test_is_anonymous(self):
@@ -34,16 +28,12 @@ class TestUser:
         assert user.is_anonymous()
 
     def test_repr(self):
-        user = User.create(
-            social_id='twitter$timbueno',
-            nickname='longboxed')
+        user = User.create(email='timbueno@gmail.com')
         name = user.__repr__()
-        assert name == '<User(longboxed)>'
+        assert name == '<User(timbueno@gmail.com)>'
 
     def test_default_role(self):
-        user = User.create(
-            social_id='twitter$timbueno',
-            nickname='longboxed')
+        user = User.create(email='timbueno@gmail.com')
         assert user.role.default
 
 
