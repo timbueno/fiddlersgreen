@@ -26,6 +26,7 @@ def _make_context():
     app, db, and the User model by default
     """
     return {'app': app}
+    return {'app': app, 'User': User}
 
 
 # Add commands to the manager
