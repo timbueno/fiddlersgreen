@@ -10,6 +10,8 @@ import time
 
 import pytest
 
+from flask import current_app
+
 from fiddlersgreen.models import User, AnonymousUser, Role
 
 
@@ -55,6 +57,17 @@ class TestUser:
         u1 = User.create(email='timbueno@gmail.com', password='cat')
         u2 = User.create(email='longboxed@gmail.com', password='cat')
         assert u1.password_hash != u2.password_hash
+
+    def test_get_auth_token(self):
+        u = User.create(email='timbueno@gmail.com', password='cat')
+        token = u.get_auth_token()
+        assert token
+
+    def test_verify_auth_token(self):
+        u = User.create(email='timbueno@gmail.com', password='cat')
+        token = u.get_auth_token()
+        retrieved = User.verify_auth_token(token)
+        assert retrieved == u
 
     def test_ping(self):
         user = User.create(email='timbueno@gmail.com', password='cat')
