@@ -11,7 +11,7 @@ import importlib
 
 from flask import (Blueprint, Flask)
 
-from .core import db
+from .core import bcrypt, db, login_manager
 
 
 def create_app(package_name, package_path, config):
@@ -31,6 +31,8 @@ def create_app(package_name, package_path, config):
 
 def register_extensions(app):
     db.init_app(app)
+    bcrypt.init_app(app)
+    login_manager.init_app(app)
     return None
 
 
