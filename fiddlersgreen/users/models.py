@@ -8,7 +8,10 @@
 """
 from datetime import datetime
 
+from flask import current_app
 from flask.ext.login import UserMixin, AnonymousUserMixin
+from itsdangerous import JSONWebSignatureSerializer as Serializer
+
 from ..core import bcrypt, db, Model, ReferenceCol
 
 
@@ -74,6 +77,19 @@ class User(Model, UserMixin):
 
     def verify_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
+
+    def get_auth_token(self):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        return s.dumps({'id': self.id}).decode('ascii')
+
+    @staticmethod
+    def verify_auth_token(token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return None
+        return User.query.get(data['id'])
 
     def ping(self):
         self.last_seen = datetime.utcnow()
