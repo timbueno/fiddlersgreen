@@ -8,6 +8,7 @@
 """
 import pytest
 
+from fiddlersgreen.api import create_app as create_api
 from fiddlersgreen.frontend import create_app as create_frontend
 from fiddlersgreen.core import db as _db
 from fiddlersgreen.models import Role
@@ -18,6 +19,18 @@ from fiddlersgreen.settings import config as app_config
 def frontend_app():
     config = app_config['test']
     _app = create_frontend(config)
+    ctx = _app.test_request_context()
+    ctx.push()
+
+    yield _app
+
+    ctx.pop()
+
+
+@pytest.yield_fixture(scope='function')
+def api_app():
+    config = app_config['test']
+    _app = create_api(config)
     ctx = _app.test_request_context()
     ctx.push()
 
