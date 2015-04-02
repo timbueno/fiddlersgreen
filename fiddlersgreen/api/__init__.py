@@ -21,7 +21,14 @@ def create_app(config):
     # Set the default JSON encoder
     app.json_encoder = JSONEncoder
 
+    # Register api app specific extensions
+    register_extensions(app)
+
     return app
+
+
+def register_extensions(app):
+    return None
 
 
 def route(bp, *args, **kwargs):
