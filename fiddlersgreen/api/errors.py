@@ -45,3 +45,12 @@ def forbidden(message):
     response = jsonify({'error': 'forbidden', 'message': msg})
     status_code = 403
     return response, status_code
+
+
+def internal_server_error(message):
+    msg = 'Internal Server Error'
+    if type(message) is text_type:
+        msg = message
+    response = jsonify({'error': 'internal server error', 'message': msg})
+    status_code = 500
+    return response, status_code
