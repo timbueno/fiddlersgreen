@@ -10,47 +10,38 @@ import time
 
 import pytest
 
-from flask import current_app
-
 from fiddlersgreen.models import User, AnonymousUser, Role
 
 
 @pytest.mark.usefixtures('db')
 class TestUser:
 
-    def test_get_by_id(self):
-        user = User.create(email='timbueno@gmail.com')
+    def test_get_by_id(self, user):
         retrieved = User.query.get(user.id)
         assert retrieved == user
 
-    def test_is_not_anonymous(self):
-        user = User.create(email='timbueno@gmail.com')
+    def test_is_not_anonymous(self, user):
         assert user.is_anonymous() is False
 
     def test_is_anonymous(self):
         user = AnonymousUser()
         assert user.is_anonymous()
 
-    def test_repr(self):
-        user = User.create(email='timbueno@gmail.com')
+    def test_repr(self, user):
         name = user.__repr__()
         assert name == '<User(timbueno@gmail.com)>'
 
-    def test_default_role(self):
-        user = User.create(email='timbueno@gmail.com')
+    def test_default_role(self, user):
         assert user.role.default
 
-    def test_password_setter(self):
-        user = User.create(email='timbueno@gmail.com', password='cat')
+    def test_password_setter(self, user):
         assert user.password_hash is not None
 
-    def test_no_password_getter(self):
-        user = User.create(email='timbueno@gmail.com', password='cat')
+    def test_no_password_getter(self, user):
         with pytest.raises(AttributeError):
             user.password
 
-    def test_password_verification(self):
-        user = User.create(email='timbueno@gmail.com', password='cat')
+    def test_password_verification(self, user):
         assert user.verify_password('cat')
 
     def test_password_salts_are_random(self):
@@ -58,19 +49,27 @@ class TestUser:
         u2 = User.create(email='longboxed@gmail.com', password='cat')
         assert u1.password_hash != u2.password_hash
 
-    def test_get_auth_token(self):
-        u = User.create(email='timbueno@gmail.com', password='cat')
-        token = u.get_auth_token()
+    def test_get_auth_token(self, user):
+        token = user.get_auth_token()
         assert token
 
-    def test_verify_auth_token(self):
-        u = User.create(email='timbueno@gmail.com', password='cat')
-        token = u.get_auth_token()
+    def test_verify_auth_token(self, user):
+        token = user.get_auth_token()
         retrieved = User.verify_auth_token(token)
-        assert retrieved == u
+        assert retrieved == user
 
-    def test_ping(self):
-        user = User.create(email='timbueno@gmail.com', password='cat')
+    def test_verify_auth_token_password_change(self, user):
+        token = user.get_auth_token()
+        # Token should not change
+        assert token == user.get_auth_token()
+        # Change password
+        user.password = 'dog'
+        user.save()
+        # Token should be different
+        new_token = user.get_auth_token()
+        assert token != new_token
+
+    def test_ping(self, user):
         last_seen_before = user.last_seen
         time.sleep(1)
         user.ping()
