@@ -6,7 +6,21 @@
     fiddlersgreen helpers module
 
 """
+import hashlib
+
 from flask.json import JSONEncoder as BaseJSONEncoder
+
+from .compat import text_type
+
+
+def encode_string(string):
+    if isinstance(string, text_type):
+        string = string.encode('utf-8')
+    return string
+
+
+def md5(data):
+    return hashlib.md5(encode_string(data)).hexdigest()
 
 
 class JSONEncoder(BaseJSONEncoder):
