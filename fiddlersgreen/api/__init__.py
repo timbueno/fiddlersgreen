@@ -10,6 +10,7 @@ from functools import wraps
 
 from flask import jsonify
 
+from .errors import bad_request, unauthorized, forbidden, not_found
 from .. import factory
 from ..helpers import JSONEncoder
 
@@ -24,11 +25,21 @@ def create_app(config):
     # Register api app specific extensions
     register_extensions(app)
 
+    # Register error handlers
+    register_errorhandlers(app)
+
     return app
 
 
 def register_extensions(app):
     return None
+
+
+def register_errorhandlers(app):
+    app.errorhandler(400)(bad_request)
+    app.errorhandler(401)(unauthorized)
+    app.errorhandler(403)(forbidden)
+    app.errorhandler(404)(not_found)
 
 
 def route(bp, *args, **kwargs):
