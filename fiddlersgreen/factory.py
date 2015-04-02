@@ -30,26 +30,33 @@ def create_app(package_name, package_path, config):
     return app
 
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)
+
+
+@login_manager.token_loader
+def load_user_from_token(token):
+    return User.verify_auth_token(token)
+
+
+@login_manager.request_loader
+def load_user_from_request(request):
+    # First try to load user from api key url arg
+    api_key = request.args.get('api_key')
+    if api_key:
+        user = User.verify_auth_token(api_key)
+        if user:
+            return user
+    # Finally, return None if no user was logged in
+    return None
+
+
 def register_extensions(app):
     db.init_app(app)
     bcrypt.init_app(app)
 
     login_manager.init_app(app)
-
-    @login_manager.token_loader
-    def load_user_from_token(token):
-        return User.verify_auth_token(token)
-
-    @login_manager.request_loader
-    def load_user_from_request(request):
-        # First try to load user from api key url arg
-        api_key = request.args.get('api_key')
-        if api_key:
-            user = User.verify_auth_token(api_key)
-            if user:
-                return user
-        # Finally, return None if no user was logged in
-        return None
 
     return None
 
