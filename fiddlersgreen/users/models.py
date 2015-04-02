@@ -11,8 +11,10 @@ from datetime import datetime
 from flask import current_app
 from flask.ext.login import UserMixin, AnonymousUserMixin
 from itsdangerous import JSONWebSignatureSerializer as Serializer
+from werkzeug.security import safe_str_cmp
 
 from ..core import bcrypt, db, Model, ReferenceCol
+from ..helpers import md5
 
 
 ROLES = {
@@ -80,7 +82,10 @@ class User(Model, UserMixin):
 
     def get_auth_token(self):
         s = Serializer(current_app.config['SECRET_KEY'])
-        return s.dumps({'id': self.id}).decode('ascii')
+        return s.dumps({
+            'id': self.id,
+            'pw_hash': md5(self.password_hash)
+        }).decode('ascii')
 
     @staticmethod
     def verify_auth_token(token):
@@ -89,7 +94,10 @@ class User(Model, UserMixin):
             data = s.loads(token)
         except:
             return None
-        return User.query.get(data['id'])
+        user = User.query.get(data['id'])
+        if user and safe_str_cmp(md5(user.password_hash), data['pw_hash']):
+            return user
+        return None
 
     def ping(self):
         self.last_seen = datetime.utcnow()
