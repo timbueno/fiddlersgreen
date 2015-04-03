@@ -26,6 +26,7 @@ def unauthorized(message):
         msg = message
     response = jsonify({'error': 'unauthorized', 'message': msg})
     status_code = 401
+    response.headers['WWW-Authenticate'] = 'Basic realm="Unauthorized Access"'
     return response, status_code
 
 
